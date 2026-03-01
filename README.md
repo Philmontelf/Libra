@@ -1,10 +1,12 @@
 # Libra
 
-This repository contains a HTML scale [Code](Code) that visually shows which of the two values is higher or lower.
+This repository contains a HTML scale [Code.html](Code.html) that visually shows which of the two values is higher or lower.
 
 ## How to use
 
-- Open [Code](Code) in your browser.
+- Download [Code.html](Code.html).
+
+- Open it.
 
 - Insert one number on the left side and another on the right side.
 
@@ -12,7 +14,7 @@ This repository contains a HTML scale [Code](Code) that visually shows which of 
 
 ## Files
 
-- [Code](Code) — HTML page.
+- [Code.html](Code.html) — HTML page.
 
 ## Credits
 Created by **Philmontelf**
