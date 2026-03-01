@@ -1,6 +1,6 @@
 # Libra
 
-This repository contains a HTML scale [Code.html](Code.html) that visually shows which of the two values is higher or lower.
+This folder contains a HTML scale [Code.html](Code.html) that visually shows which of the two values is higher or lower.
 
 ## How to use
 
