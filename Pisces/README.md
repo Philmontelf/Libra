@@ -10,7 +10,7 @@ This folder contains a HTML scale [Code.html](Code.html) that visually shows whi
 
 - Insert one number on the left side and another on the right side.
 
-- Click on **verify**: Both fishes tilts towards eachother depending on how similar the numbers are; if the numbers are the same, the fishes meet
+- Click on **verify**: Both fish come closer towards eachother depending on how similar the the input word is to the scrambled one; if the word is correct, the fishes meet.
 
 ## Files
 
