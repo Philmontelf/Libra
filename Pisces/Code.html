@@ -3,78 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <style>
-.fishL {
-  position: absolute;
-  width: 100px;
-  height: 60px;
-  background-color: #2c2c2c;
-  color: #2c2c2c; /* currentColor per coda */
-  border-radius: 50% 50% 50% 50% / 100% 100% 100% 100%;
-  transition: left .8s cubic-bezier(.25,1.2,.3,1), background-color .4s, color .4s;
-  transform: scaleX(-1);
-}
-.fishL::after {
-  content:'';
-  position:absolute;
-  right:-25px;
-  top:10px;
-  border-top:20px solid transparent;
-  border-bottom:20px solid transparent;
-  border-left:30px solid currentColor;
-  transform: scaleX(-1);
-}
-.fishL::before {
-  content:'';
-  position:absolute;
-  left:20px;
-  top:15px;
-  width:10px;
-  height:10px;
-  background:#fff;
-  border-radius:50%;
-}
+  .fishL {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background-color: #2c2c2c;
+    color: #2c2c2c;
+    border-radius: 50% 50% 50% 50% / 100% 100% 100% 100%;
+    transition: left .8s cubic-bezier(.25,1.2,.3,1), background-color .4s, color .4s;
+    transform: scaleX(-1);
+  }
+  .fishL::after {
+    content:'';
+    position:absolute;
+    right:-25px;
+    top:10px;
+    border-top:20px solid transparent;
+    border-bottom:20px solid transparent;
+    border-left:30px solid currentColor;
+    transform: scaleX(-1);
+  }
+  .fishL::before {
+    content:'';
+    position:absolute;
+    left:20px;
+    top:15px;
+    width:10px;
+    height:10px;
+    background:#fff;
+    border-radius:50%;
+  }
 
-.fishR {
-  position: absolute;
-  width: 100px;
-  height: 60px;
-  background-color: #2c2c2c;
-  color: #2c2c2c;
-  border-radius: 50% 50% 50% 50% / 100% 100% 100% 100%;
-  transition: left .8s cubic-bezier(.25,1.2,.3,1), background-color .4s, color .4s;
-  transform: scaleX(-1);
-}
-.fishR::after {
-  content:'';
-  position:absolute;
-  left:-25px;
-  top:10px;
-  border-left:none;
-  border-right:30px solid currentColor;
-  border-top:20px solid transparent;
-  border-bottom:20px solid transparent;
-  transform: scaleX(-1);
-}
-.fishR::before {
-  content:'';
-  position:absolute;
-  left:auto;
-  right:20px;
-  top:15px;
-  width:10px;
-  height:10px;
-  background:#fff;
-  border-radius:50%;
-}
+  .fishR {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background-color: #2c2c2c;
+    color: #2c2c2c;
+    border-radius: 50% 50% 50% 50% / 100% 100% 100% 100%;
+    transition: left .8s cubic-bezier(.25,1.2,.3,1), background-color .4s, color .4s;
+    /* Rimosso scaleX(-1) qui per farlo guardare a sinistra */
+  }
+  .fishR::after {
+    content:'';
+    position:absolute;
+    right:-25px; /* Coda a destra */
+    top:10px;
+    border-top:20px solid transparent;
+    border-bottom:20px solid transparent;
+    border-left:30px solid currentColor;
+    transform: scaleX(-1);
+  }
+  .fishR::before {
+    content:'';
+    position:absolute;
+    left:20px; /* Occhio a sinistra */
+    top:15px;
+    width:10px;
+    height:10px;
+    background:#fff;
+    border-radius:50%;
+  }
 </style>
 </head>
 <body>
 
 <div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; text-align:center; margin:40px 0; display:flex; flex-direction:column; align-items:center;">
 
+  <div style="margin-bottom: 10px; margin-left: -55px; color: #777; font-weight: bold;">
+    Anagram: <span id="hint" style="color: #2c2c2c; letter-spacing: 0px;"></span>
+  </div>
+
   <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:15px; position:relative;">
-    <input id="numL" type="number" style="width:200px; padding:10px; text-align:center; border-radius:10px; border:3px solid #ccc; font-size:16px; font-weight:700; color:#333; transition:all .25s;">
-    <input id="numR" type="number" style="width:200px; padding:10px; text-align:center; border-radius:10px; border:3px solid #ccc; font-size:16px; font-weight:700; color:#333; transition:all .25s;">
+    <input id="wordInput" type="text" placeholder="Scrivi qui..." 
+           style="width:250px; padding:10px; text-align:center; border-radius:10px; border:3px solid #ccc; font-size:18px; font-weight:700; color:#333; transition:all .25s; text-transform: uppercase;">
 
     <div style="position:relative;">
       <button id="checkBtn" style="width:52px; height:52px; border-radius:50%; border:none; background:#2c2c2c; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center;">
@@ -83,7 +85,6 @@
         </svg>
       </button>
 
-      <!-- LABEL VERIFY -->
       <span id="verifyLabel"
         style="position:absolute; right:-90px; top:50%; transform:translateY(-50%) translateX(-8px); opacity:0; color:#2c2c2c; font-weight:700; font-size:16px; pointer-events:none; transition:opacity .3s, transform .3s;">
         Verify
@@ -91,8 +92,7 @@
     </div>
   </div>
 
-  <!-- AREA PESCI -->
-  <div style="width:400px; height:200px; position:relative;">
+  <div style="width:400px; height:200px; position:relative; background: #f9f9f9; border-radius: 20px;">
     <div id="fishL" class="fishL" style="left:50px; top:70px;"></div>
     <div id="fishR" class="fishR" style="left:250px; top:70px;"></div>
   </div>
@@ -102,56 +102,76 @@
 <script>
 const btn = document.getElementById('checkBtn');
 const label = document.getElementById('verifyLabel');
-const numL = document.getElementById('numL');
-const numR = document.getElementById('numR');
+const wordInput = document.getElementById('wordInput');
+const hintSpan = document.getElementById('hint');
 const fishL = document.getElementById('fishL');
 const fishR = document.getElementById('fishR');
 
-const center = 200;
+const targetWord = "PISCES";
+const center = 200; // Centro dell'area (400px / 2)
 const fishWidth = 100;
 
+// Funzione per creare l'anagramma all'avvio
+function shuffle(word) {
+    let arr = word.split('');
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.join('');
+}
+hintSpan.innerText = shuffle(targetWord);
+
 function moveFish(diffDistance){
+  // diffDistance = 0 significa che i pesci si toccano al centro
   fishL.style.left = (center - diffDistance - fishWidth) + "px";
   fishR.style.left = (center + diffDistance) + "px";
 }
 
-// MOSTRA/NASCONDI LABEL AL PASSAGGIO
-btn.onmouseenter = ()=>{
+btn.onmouseenter = () => {
   label.style.opacity = 1;
   label.style.transform = 'translateY(-50%) translateX(0)';
 };
-btn.onmouseleave = ()=>{
+btn.onmouseleave = () => {
   label.style.opacity = 0;
   label.style.transform = 'translateY(-50%) translateX(-8px)';
 };
 
-// CLICK
-btn.onclick = ()=>{
-  const nL = parseFloat(numL.value) || 0;
-  const nR = parseFloat(numR.value) || 0;
-  const diff = Math.abs(nL - nR);
+btn.onclick = () => {
+  const userInput = wordInput.value.trim().toUpperCase();
+  
+  // Ordiniamo le lettere per controllare se è un anagramma
+  const sortedTarget = targetWord.split('').sort().join('');
+  const sortedUser = userInput.split('').sort().join('');
 
   let fishColor = '#2c2c2c';
-  if(nL === nR){
-    numL.style.borderColor = numR.style.borderColor = '#4CAF50';
-    numL.style.color = numR.style.color = '#4CAF50';
+  let distance = 60; // Default: anagramma (posizione media)
+
+  if (userInput === targetWord) {
+    // CORRETTO
     fishColor = '#4CAF50';
-  } else {
-    numL.style.borderColor = numR.style.borderColor = '#f44336';
-    numL.style.color = numR.style.color = '#f44336';
+    distance = 0; // Si incontrano
+    wordInput.style.borderColor = '#4CAF50';
+  } 
+  else if (sortedUser === sortedTarget) {
+    // ANAGRAMMA (stesse lettere, ordine sbagliato)
+    fishColor = '#FF9800'; // Arancione (attenzione)
+    distance = 60; // Posizione media
+    wordInput.style.borderColor = '#FF9800';
+  } 
+  else {
+    // ERRORE (lettere aggiunte, tolte o totalmente diverse)
     fishColor = '#f44336';
+    distance = 120; // Massima distanza
+    wordInput.style.borderColor = '#f44336';
   }
 
+  // Applica cambiamenti
   fishL.style.backgroundColor = fishR.style.backgroundColor = fishColor;
   fishL.style.color = fishR.style.color = fishColor;
-
-  let d = 0;
-  if(diff === 0) d = 0;
-  else if(diff > 15) d = 60;
-  else if(diff > 8) d = 40;
-  else d = 20;
-
-  moveFish(d);
+  wordInput.style.color = fishColor;
+  
+  moveFish(distance);
 };
 </script>
 
