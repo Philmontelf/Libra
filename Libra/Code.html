@@ -77,52 +77,56 @@ btn.onclick = ()=>{
   const nR = parseFloat(vR);
 
   const both = vL!=='' && vR!=='';
-  const equal = both && nL===nR;
-
+  const diff = Math.abs(nL - nR);
   
-  if(!vL && !vR){
-    numL.style.borderColor='#ccc';
-    numR.style.borderColor='#ccc';
-    numL.style.color='#333';
-    numR.style.color='#333';
-  }else if(equal){
-    numL.style.borderColor='#4CAF50';
-    numR.style.borderColor='#4CAF50';
-    numL.style.color='#4CAF50';
-    numR.style.color='#4CAF50';
-  }else{
+  let status = 'error'; // default
+  if (!vL && !vR) status = 'none';
+  else if (both && nL === nR) status = 'equal';
+  else if (both && diff === 1) status = 'close';
+
+  // Gestione colori Input
+  if(status === 'none'){
+    numL.style.borderColor = numR.style.borderColor = '#ccc';
+    numL.style.color = numR.style.color = '#333';
+  } else if(status === 'equal'){
+    numL.style.borderColor = numR.style.borderColor = '#4CAF50';
+    numL.style.color = numR.style.color = '#4CAF50';
+  } else if(status === 'close'){
+    numL.style.borderColor = numR.style.borderColor = '#FF9800';
+    numL.style.color = numR.style.color = '#FF9800';
+  } else {
     if(vL){ numL.style.borderColor='#f44336'; numL.style.color='#f44336'; }
     if(vR){ numR.style.borderColor='#f44336'; numR.style.color='#f44336'; }
   }
 
-  function setBall(ball, active, equal){
-    if(!active){
+  function setBall(ball, active, currentStatus){
+    if(!active || currentStatus === 'none'){
       ball.setAttribute('fill','transparent');
       ball.style.filter='none';
       ball.setAttribute('cy',58);
       return;
     }
     ball.setAttribute('cy',72);
-    if(equal){
+    if(currentStatus === 'equal'){
       ball.setAttribute('fill','#4CAF50');
       ball.style.filter='drop-shadow(0 0 8px #4CAF50)';
-    }else{
+    } else if(currentStatus === 'close'){
+      ball.setAttribute('fill','#FF9800');
+      ball.style.filter='drop-shadow(0 0 8px #FF9800)';
+    } else {
       ball.setAttribute('fill','#f44336');
       ball.style.filter='drop-shadow(0 0 8px #f44336)';
     }
   }
 
-  setBall(ballL, vL, equal);
-  setBall(ballR, vR, equal);
+  setBall(ballL, vL, status);
+  setBall(ballR, vR, status);
 
-  
   if(!vL && !vR) return rotateArm(0);
   if(vL && !vR) return rotateArm(-12);   
   if(vR && !vL) return rotateArm(12);    
-
   if(nL>nR) return rotateArm(-12);  
   if(nR>nL) return rotateArm(12);   
-
   return rotateArm(0);
 };
 </script>
