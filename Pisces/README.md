@@ -1,6 +1,6 @@
 # Pisces
 
-This folder contains a HTML scale [Code.html](Code.html) that visually shows which of the two values is higher or lower.
+This folder contains HTML fishes [Code.html](Code.html) that visually shows if a scrambled word is correctly unscrambled by the user.
 
 ## How to use
 
