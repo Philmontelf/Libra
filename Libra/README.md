@@ -10,7 +10,7 @@ This folder contains a HTML scale [Code.html](Code.html) that visually shows whi
 
 - Insert one number on the left side and another on the right side.
 
-- Click on **verify**: The scale tilts towards the side with the highest number; if the numbers are the same, the scale balances.
+- Click on **Verify**: The scale tilts towards the side with the highest number; if the numbers are the same, the scale balances.
 
 ## Files
 
