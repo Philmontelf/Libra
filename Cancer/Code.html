@@ -1,1 +1,193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chela Robotica Statica</title>
+    <style>
+        :root {
+            --claw-color: #2c2c2c;
+            --ball-color: #f1c40f; 
+        }
 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ecf0f1;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .container { display: flex; flex-direction: column; align-items: center; }
+
+        .controls-wrapper { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; }
+        
+        #wordInput { 
+            padding: 12px; border-radius: 10px; border: 3px solid #ccc; 
+            font-size: 18px; font-weight: bold; width: 180px; text-align: center; outline: none;
+        }
+        
+        #checkBtn { 
+            width: 55px; height: 55px; border-radius: 50%; border: none; 
+            background: #2c2c2c; color: white; cursor: pointer; font-size: 22px;
+        }
+
+        .stage {
+            width: 350px; height: 420px; 
+            position: relative; overflow: hidden; 
+            
+        }
+
+        /* BRACCIO TELESCOPICO SMUSSATO */
+        .claw-system {
+            position: absolute; left: 50%; top: 0; 
+            transform: translateX(-50%); z-index: 10;
+        }
+
+        .claw-arm {
+            width: 26px; 
+            height: 40px; 
+            background-color: var(--claw-color);
+            position: relative;
+            border-radius: 8px 8px 0 0; /* Smussatura superiore fissa */
+            transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s;
+        }
+
+        .pincer {
+            width: 36px; height: 65px; background-color: var(--claw-color);
+            position: absolute; bottom: -65px;
+            z-index: 11;
+            transition: transform 0.4s cubic-bezier(.25,1.2,.3,1), background-color 0.4s;
+        }
+
+        .pincer.left {
+            border-radius: 60px 0 0 60px; left: -23px;
+            transform-origin: right top; transform: rotate(45deg);
+        }
+
+        .pincer.right {
+            border-radius: 0 60px 60px 0; right: -23px;
+            transform-origin: left top; transform: rotate(-45deg);
+        }
+
+        /* Chiusura precisa sui bordi */
+        .pincer.left.closed { transform: rotate(14deg); }
+        .pincer.right.closed { transform: rotate(-14deg); }
+
+        /* PALLINA */
+        #ball {
+            width: 30px; height: 30px; background-color: var(--ball-color);
+            border-radius: 50%; position: absolute; left: 50%;
+            transform: translateX(-50%); 
+            bottom: 0px; z-index: 5;
+            background: #ffa500;
+            transition: bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            
+        }
+
+        
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="margin-bottom: 10px; color: #999; font-weight: bold; font-size: 11px; letter-spacing: 1px;">
+        COMANDI: 1 (CHIUDI) | 2 (APRI) | 3 (ESTENDI/RITRAI)
+    </div>
+
+    <div class="controls-wrapper">
+        <input id="wordInput" type="text" placeholder="ES: 313" maxlength="15">
+        <button id="checkBtn">▶</button>
+    </div>
+
+    <div class="stage">
+        <div class="claw-system">
+            <div id="clawArm" class="claw-arm">
+                <div id="pL" class="pincer left"></div>
+                <div id="pR" class="pincer right"></div>
+            </div>
+        </div>
+        <div id="shadow"></div>
+        <div id="ball"></div>
+    </div>
+</div>
+
+<script>
+    const btn = document.getElementById('checkBtn');
+    const input = document.getElementById('wordInput');
+    const clawArm = document.getElementById('clawArm');
+    const pL = document.getElementById('pL');
+    const pR = document.getElementById('pR');
+    const ball = document.getElementById('ball');
+    const shadow = document.getElementById('shadow');
+
+    // STATI PERSISTENTI (non vengono resettati a fine funzione)
+    let isClosed = false;
+    let isExtended = false; 
+    let hasBall = false;
+
+    function syncGraphics() {
+        // Aggiorna altezza braccio
+        clawArm.style.height = isExtended ? "345px" : "40px";
+
+        // Aggiorna stato pinze
+        if (isClosed) {
+            pL.classList.add('closed');
+            pR.classList.add('closed');
+            document.documentElement.style.setProperty('--claw-color', '#4CAF50');
+        } else {
+            pL.classList.remove('closed');
+            pR.classList.remove('closed');
+            document.documentElement.style.setProperty('--claw-color', '#2c2c2c');
+        }
+
+        // Aggiorna palla e ombra
+        if (hasBall) {
+            ball.style.bottom = isExtended ? "0px" : "305px";
+            shadow.style.opacity = isExtended ? "1" : "0";
+            shadow.style.transform = `translateX(-50%) scale(${isExtended ? 1 : 0.4})`;
+        } else {
+            ball.style.bottom = "0px";
+            shadow.style.opacity = "1";
+            shadow.style.transform = "translateX(-50%) scale(1)";
+        }
+    }
+
+    async function execute() {
+        const commands = input.value.split('').filter(c => "123".includes(c));
+        if (!commands.length) return;
+
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.3';
+
+        for (const cmd of commands) {
+            if (cmd === '1') {
+                isClosed = true;
+                if (isExtended && !hasBall) hasBall = true;
+            } 
+            else if (cmd === '2') {
+                isClosed = false;
+                hasBall = false;
+            } 
+            else if (cmd === '3') {
+                isExtended = !isExtended;
+            }
+            syncGraphics();
+            await new Promise(r => setTimeout(r, 900));
+        }
+
+        // FINE ROUTINE: Il braccio resta dove si trova
+        btn.style.pointerEvents = 'all';
+        btn.style.opacity = '1';
+        input.value = ""; // Pulisce l'input per il prossimo set di comandi
+    }
+
+    btn.onclick = execute;
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') execute(); });
+</script>
+
+</body>
+</html>
