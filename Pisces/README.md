@@ -8,7 +8,7 @@ This folder contains HTML fishes [Code.html](Code.html) that visually shows if a
 
 - Open it.
 
-- Insert one number on the left side and another on the right side.
+- Insert one number on the left side and another on the right side in the input boxes.
 
 - Click on **Verify**: Both fish come closer towards eachother depending on how similar the the input word is to the scrambled one; if the word is correct, the fishes meet.
 
