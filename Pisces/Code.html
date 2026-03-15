@@ -1,268 +1,169 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <style>
-    :root {
-      --colore-freccia-base: #2c2c2c;
-      --colore-pallina-base: #2d3436;
-      --verde-successo: #4CAF50;
-      --freccia-width: 126px;
-      --freccia-height: 42px;
-    }
+<meta charset="UTF-8">
+<style>
+  .fishL {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background-color: #2c2c2c;
+    color: #2c2c2c;
+    border-radius: 50% 50% 50% 50% / 100% 100% 100% 100%;
+    transition: left .8s cubic-bezier(.25,1.2,.3,1), background-color .4s, color .4s;
+    transform: scaleX(-1);
+  }
+  .fishL::after {
+    content:'';
+    position:absolute;
+    right:-25px;
+    top:10px;
+    border-top:20px solid transparent;
+    border-bottom:20px solid transparent;
+    border-left:30px solid currentColor;
+    transform: scaleX(-1);
+  }
+  .fishL::before {
+    content:'';
+    position:absolute;
+    left:20px;
+    top:15px;
+    width:10px;
+    height:10px;
+    background:#fff;
+    border-radius:50%;
+  }
 
-    body {
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      display: flex; flex-direction: column; align-items: center;
-      background: #ffffff; margin: 0; padding-top: 40px;
-    }
-
-    .ui-container { text-align: center; margin-bottom: 30px; }
-
-    /* Testo sopra (operazione) ridimensionato per essere più piccolo */
-    .math-hint { 
-      margin-bottom: 10px; 
-      color: #777; 
-      font-weight: bold; 
-      font-size: 18px; /* Ridotto per un look più elegante */
-      transition: color 0.4s ease;
-    }
-    
-    #operazione {
-      color: #2c2c2c;
-      letter-spacing: 1px;
-      font-size: 22px;
-    }
-
-    .input-box { 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      gap: 12px; 
-      position: relative;
-    }
-
-    #wordInput {
-      width: 150px; 
-      padding: 10px; 
-      text-align: center; 
-      border-radius: 10px;
-      border: 3px solid #ccc; 
-      font-size: 22px; 
-      font-weight: 700; 
-      color: #333;
-      outline: none;
-      transition: all .25s;
-    }
-
-    .btn-wrapper { position: relative; }
-
-    #checkBtn {
-      width: 52px; height: 52px; border-radius: 50%; border: none;
-      background: #2c2c2c; color: white; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    #checkBtn svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    #verifyLabel {
-      position: absolute; 
-      right: -80px; 
-      top: 50%; 
-      transform: translateY(-50%) translateX(-8px); 
-      opacity: 0; 
-      color: #2c2c2c; 
-      font-weight: 700; 
-      font-size: 16px; 
-      pointer-events: none; 
-      transition: opacity .3s, transform .3s;
-    }
-
-    .btn-wrapper:hover #verifyLabel {
-      opacity: 1;
-      transform: translateY(-50%) translateX(0);
-    }
-
-    .campo-tiro {
-      width: 800px; height: 400px; position: relative; 
-      border-radius: 25px; 
-      overflow: hidden; display: flex; align-items: center;
-    }
-
-    .contenitore-freccia {
-      width: var(--freccia-width); height: var(--freccia-height);
-      position: absolute; left: 50px; top: 179px; 
-      z-index: 20;
-      transform-origin: center right;
-      transform: translate(0, 0) rotate(0deg);
-      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .in-volo { transition: none; }
-
-    .pallina {
-      position: absolute; right: 97px; top: 160px;
-      width: 80px; height: 80px; 
-      background: var(--colore-pallina-base);
-      border-radius: 50%;
-      z-index: 10;
-      transition: background 0.3s ease;
-    }
-
-    @keyframes tiro-centro {
-      0%   { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(459px, 0) rotate(0deg); } 
-    }
-    @keyframes flop-corto {
-      0%   { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(180px, 150px) rotate(60deg); }
-    }
-    @keyframes flop-medio {
-      0%   { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(350px, 120px) rotate(45deg); }
-    }
-
-    .anim-centro { animation: tiro-centro 0.4s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-    .anim-corto  { animation: flop-corto 0.8s forwards ease-in; }
-    .anim-medio  { animation: flop-medio 0.9s forwards ease-in; }
-
-    svg { width: 100%; height: 100%; overflow: visible; }
-    #path-freccia { fill: var(--colore-freccia-base); transition: fill 0.3s ease; }
-  </style>
+  .fishR {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background-color: #2c2c2c;
+    color: #2c2c2c;
+    border-radius: 50% 50% 50% 50% / 100% 100% 100% 100%;
+    transition: left .8s cubic-bezier(.25,1.2,.3,1), background-color .4s, color .4s;
+  }
+  .fishR::after {
+    content:'';
+    position:absolute;
+    right:-25px;
+    top:10px;
+    border-top:20px solid transparent;
+    border-bottom:20px solid transparent;
+    border-left:30px solid currentColor;
+    transform: scaleX(-1);
+  }
+  .fishR::before {
+    content:'';
+    position:absolute;
+    left:20px;
+    top:15px;
+    width:10px;
+    height:10px;
+    background:#fff;
+    border-radius:50%;
+  }
+</style>
 </head>
 <body>
 
-  <div class="ui-container">
-    <div class="math-hint">Risolvi: <span id="operazione"></span></div>
-    <div class="input-box">
-      <input id="wordInput" type="number" placeholder="?">
-      
-      <div class="btn-wrapper">
-        <button id="checkBtn">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M9 18l6-6-6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <span id="verifyLabel">Verify</span>
-      </div>
+<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; text-align:center; margin:40px 0; display:flex; flex-direction:column; align-items:center;">
+
+  <div style="margin-bottom: 10px; margin-left: -55px; color: #777; font-weight: bold;">
+    Anagram: <span id="hint" style="color: #2c2c2c; letter-spacing: 0px;"></span>
+  </div>
+
+  <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:15px; position:relative;">
+    <input id="wordInput" type="text" 
+           style="width:250px; padding:10px; text-align:center; border-radius:10px; border:3px solid #ccc; font-size:18px; font-weight:700; color:#333; transition:all .25s; text-transform: uppercase;">
+
+    <div style="position:relative;">
+      <button id="checkBtn" style="width:52px; height:52px; border-radius:50%; border:none; background:#2c2c2c; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18l6-6-6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <span id="verifyLabel"
+        style="position:absolute; right:-90px; top:50%; transform:translateY(-50%) translateX(-8px); opacity:0; color:#2c2c2c; font-weight:700; font-size:16px; pointer-events:none; transition:opacity .3s, transform .3s;">
+        Verify
+      </span>
     </div>
   </div>
 
-  <div class="campo-tiro">
-    <div class="contenitore-freccia" id="freccia">
-      <svg viewBox="0 0 100 40"><path id="path-freccia" d="" /></svg>
-    </div>
-    <div class="pallina" id="bersaglio"></div>
+  <div style="width:400px; height:200px; position:relative;">
+    <div id="fishL" class="fishL" style="left:50px; top:70px;"></div>
+    <div id="fishR" class="fishR" style="left:250px; top:70px;"></div>
   </div>
+
+</div>
 
 <script>
-  const input = document.getElementById('wordInput');
-  const btn = document.getElementById('checkBtn');
-  const opSpan = document.getElementById('operazione');
-  const freccia = document.getElementById('freccia');
-  const bersaglio = document.getElementById('bersaglio');
+const btn = document.getElementById('checkBtn');
+const label = document.getElementById('verifyLabel');
+const wordInput = document.getElementById('wordInput');
+const hintSpan = document.getElementById('hint');
+const fishL = document.getElementById('fishL');
+const fishR = document.getElementById('fishR');
 
-  let risultatoEsatto = 0;
-  let resetTimeout;
+const targetWord = "PISCES";
+const center = 200; 
+const fishWidth = 100;
 
-  function generaOperazione() {
-    const a = Math.floor(Math.random() * 10) + 1;
-    const b = Math.floor(Math.random() * 10) + 1;
-    risultatoEsatto = a + b;
-    opSpan.innerText = `${a} + ${b}`;
-    input.value = ""; 
-    input.style.borderColor = "#ccc"; 
-    input.style.color = "#333";
-    input.focus();
-    
-    document.documentElement.style.setProperty('--colore-freccia-base', '#2c2c2c');
-    bersaglio.style.background = "#2d3436";
-  }
-
-  function attivaLancio(classe, colore, colpisciBersaglio) {
-    clearTimeout(resetTimeout);
-    document.documentElement.style.setProperty('--colore-freccia-base', colore);
-    input.style.color = colore;
-    
-    if (colpisciBersaglio) {
-      bersaglio.style.background = colore;
-    } else {
-      bersaglio.style.background = "#2d3436";
+function shuffle(word) {
+    let arr = word.split('');
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    
-    freccia.classList.remove('anim-corto', 'anim-medio', 'anim-centro', 'in-volo');
-    void freccia.offsetWidth; 
-    freccia.classList.add('in-volo', classe);
+    return arr.join('');
+}
+hintSpan.innerText = shuffle(targetWord);
 
-    resetTimeout = setTimeout(tornaIndietro, 1500);
+function moveFish(diffDistance){
+  fishL.style.left = (center - diffDistance - fishWidth) + "px";
+  fishR.style.left = (center + diffDistance) + "px";
+}
+
+btn.onmouseenter = () => {
+  label.style.opacity = 1;
+  label.style.transform = 'translateY(-50%) translateX(0)';
+};
+btn.onmouseleave = () => {
+  label.style.opacity = 0;
+  label.style.transform = 'translateY(-50%) translateX(-8px)';
+};
+
+btn.onclick = () => {
+  const userInput = wordInput.value.trim().toUpperCase();
+  const sortedTarget = targetWord.split('').sort().join('');
+  const sortedUser = userInput.split('').sort().join('');
+
+  let fishColor = '#2c2c2c';
+  let distance = 60;
+
+  if (userInput === targetWord) {
+    fishColor = '#4CAF50';
+    distance = 0;
+    wordInput.style.borderColor = '#4CAF50';
+  } 
+  else if (sortedUser === sortedTarget) {
+    fishColor = '#FF9800';
+    distance = 60;
+    wordInput.style.borderColor = '#FF9800';
+  } 
+  else {
+    fishColor = '#f44336';
+    distance = 120;
+    wordInput.style.borderColor = '#f44336';
   }
 
-  function tornaIndietro() {
-    const style = window.getComputedStyle(freccia);
-    const matrix = style.transform;
-    freccia.classList.remove('anim-corto', 'anim-medio', 'anim-centro', 'in-volo');
-    freccia.style.transform = matrix;
-    void freccia.offsetWidth;
-    freccia.style.transform = "translate(0, 0) rotate(0deg)";
-    
-    setTimeout(() => {
-      if (input.style.borderColor === 'rgb(76, 175, 80)') {
-          generaOperazione();
-      } else {
-          document.documentElement.style.setProperty('--colore-freccia-base', '#2c2c2c');
-          input.value = ""; 
-          input.style.borderColor = "#ccc";
-          input.style.color = "#333";
-          freccia.style.transform = "";
-      }
-    }, 800);
-  }
-
-  btn.onclick = () => {
-    const valore = parseInt(input.value);
-    if (isNaN(valore)) return;
-    
-    if (valore === risultatoEsatto) {
-      input.style.borderColor = '#4CAF50';
-      attivaLancio('anim-centro', '#4CAF50', true);
-    } else if (Math.abs(valore - risultatoEsatto) <= 2) {
-      input.style.borderColor = '#FF9800';
-      attivaLancio('anim-medio', '#FF9800', false);
-    } else {
-      input.style.borderColor = '#f44336';
-      attivaLancio('anim-corto', '#f44336', false);
-    }
-  };
-
-  function generaPath(punti) {
-    let d = "";
-    for (let i = 0; i < punti.length; i++) {
-      const curr = punti[i], prev = punti[i === 0 ? punti.length - 1 : i - 1], next = punti[(i + 1) % punti.length];
-      const r = parseFloat(curr.r) || 0;
-      const l1 = Math.hypot(curr.x-prev.x, curr.y-prev.y), l2 = Math.hypot(next.x-curr.x, next.y-curr.y);
-      const rf = Math.min(r, l1/2, l2/2);
-      const x1 = curr.x-(curr.x-prev.x)*(rf/l1), y1 = curr.y-(curr.y-prev.y)*(rf/l1);
-      const x2 = curr.x+(next.x-curr.x)*(rf/l2), y2 = curr.y+(next.y-curr.y)*(rf/l2);
-      d += (i===0 ? `M${x1},${y1}` : ` L${x1},${y1}`) + (rf > 0 ? ` Q${curr.x},${curr.y} ${x2},${y2}` : ` L${curr.x},${curr.y}`);
-    }
-    return d + " Z";
-  }
-
-  function disegna() {
-    const puntiFreccia = [
-      {x: 0,  y: 10, r: 1}, {x: 15, y: 10, r: 10}, {x: 15, y: 18, r: 0},
-      {x: 80, y: 18, r: 0}, {x: 80, y: 10, r: 0}, {x: 100,y: 20, r: 0},
-      {x: 80, y: 30, r: 0}, {x: 80, y: 22, r: 0}, {x: 15, y: 22, r: 0},
-      {x: 15, y: 30, r: 10}, {x: 0,  y: 30, r: 1}, {x: 8,  y: 20, r: 0}
-    ];
-    document.getElementById('path-freccia').setAttribute('d', generaPath(puntiFreccia));
-  }
-
-  generaOperazione(); disegna();
-  input.addEventListener("keypress", (e) => { if (e.key === "Enter") btn.click(); });
+  fishL.style.backgroundColor = fishR.style.backgroundColor = fishColor;
+  fishL.style.color = fishR.style.color = fishColor;
+  wordInput.style.color = fishColor;
+  
+  moveFish(distance);
+};
 </script>
 
 </body>
