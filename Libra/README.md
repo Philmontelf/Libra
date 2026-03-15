@@ -8,7 +8,7 @@ This folder contains a HTML scale [Code.html](Code.html) that visually shows whi
 
 - Open it.
 
-- Insert one number on the left side and another on the right side.
+- Insert one number on the left side and another on the right side in the input boxes.
 
 - Click on **Verify**: The scale tilts towards the side with the highest number; if the numbers are the same, the scale balances.
 
