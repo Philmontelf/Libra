@@ -12,24 +12,78 @@
     }
 
     body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       display: flex; flex-direction: column; align-items: center;
-      background: #f0f2f5; margin: 0; padding-top: 40px;
+      background: #ffffff; margin: 0; padding-top: 40px;
     }
 
     .ui-container { text-align: center; margin-bottom: 30px; }
-    .math-hint { margin-bottom: 15px; color: #777; font-weight: bold; font-size: 22px; }
-    .input-box { display: flex; justify-content: center; align-items: center; gap: 12px; }
 
-    #wordInput {
-      width: 120px; padding: 12px; text-align: center; border-radius: 12px;
-      border: 3px solid #ccc; font-size: 24px; font-weight: 700; outline: none;
+    /* Testo sopra (operazione) ridimensionato per essere più piccolo */
+    .math-hint { 
+      margin-bottom: 10px; 
+      color: #777; 
+      font-weight: bold; 
+      font-size: 18px; /* Ridotto per un look più elegante */
+      transition: color 0.4s ease;
+    }
+    
+    #operazione {
+      color: #2c2c2c;
+      letter-spacing: 1px;
+      font-size: 22px;
     }
 
+    .input-box { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      gap: 12px; 
+      position: relative;
+    }
+
+    #wordInput {
+      width: 150px; 
+      padding: 10px; 
+      text-align: center; 
+      border-radius: 10px;
+      border: 3px solid #ccc; 
+      font-size: 22px; 
+      font-weight: 700; 
+      color: #333;
+      outline: none;
+      transition: all .25s;
+    }
+
+    .btn-wrapper { position: relative; }
+
     #checkBtn {
-      width: 55px; height: 55px; border-radius: 50%; border: none;
+      width: 52px; height: 52px; border-radius: 50%; border: none;
       background: #2c2c2c; color: white; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
+    }
+
+    #checkBtn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    #verifyLabel {
+      position: absolute; 
+      right: -80px; 
+      top: 50%; 
+      transform: translateY(-50%) translateX(-8px); 
+      opacity: 0; 
+      color: #2c2c2c; 
+      font-weight: 700; 
+      font-size: 16px; 
+      pointer-events: none; 
+      transition: opacity .3s, transform .3s;
+    }
+
+    .btn-wrapper:hover #verifyLabel {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
     }
 
     .campo-tiro {
@@ -85,11 +139,15 @@
     <div class="math-hint">Risolvi: <span id="operazione"></span></div>
     <div class="input-box">
       <input id="wordInput" type="number" placeholder="?">
-      <button id="checkBtn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M9 18l6-6-6-6" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+      
+      <div class="btn-wrapper">
+        <button id="checkBtn">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 18l6-6-6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span id="verifyLabel">Verify</span>
+      </div>
     </div>
   </div>
 
@@ -117,24 +175,22 @@
     opSpan.innerText = `${a} + ${b}`;
     input.value = ""; 
     input.style.borderColor = "#ccc"; 
+    input.style.color = "#333";
     input.focus();
     
-    // Reset colori totale
     document.documentElement.style.setProperty('--colore-freccia-base', '#2c2c2c');
     bersaglio.style.background = "#2d3436";
   }
 
   function attivaLancio(classe, colore, colpisciBersaglio) {
     clearTimeout(resetTimeout);
-    
-    // Colora la freccia
     document.documentElement.style.setProperty('--colore-freccia-base', colore);
+    input.style.color = colore;
     
-    // Colora il bersaglio SOLO se è corretto
     if (colpisciBersaglio) {
       bersaglio.style.background = colore;
     } else {
-      bersaglio.style.background = "#2d3436"; // Resta scuro
+      bersaglio.style.background = "#2d3436";
     }
     
     freccia.classList.remove('anim-corto', 'anim-medio', 'anim-centro', 'in-volo');
@@ -153,14 +209,13 @@
     freccia.style.transform = "translate(0, 0) rotate(0deg)";
     
     setTimeout(() => {
-      // Se era verde (indovinato), genera nuova operazione
       if (input.style.borderColor === 'rgb(76, 175, 80)') {
           generaOperazione();
       } else {
-          // Se ha sbagliato, torna allo stato neutro per riprovare
           document.documentElement.style.setProperty('--colore-freccia-base', '#2c2c2c');
           input.value = ""; 
           input.style.borderColor = "#ccc";
+          input.style.color = "#333";
           freccia.style.transform = "";
       }
     }, 800);
@@ -172,13 +227,13 @@
     
     if (valore === risultatoEsatto) {
       input.style.borderColor = '#4CAF50';
-      attivaLancio('anim-centro', '#4CAF50', true); // TRUE: Colora bersaglio
+      attivaLancio('anim-centro', '#4CAF50', true);
     } else if (Math.abs(valore - risultatoEsatto) <= 2) {
       input.style.borderColor = '#FF9800';
-      attivaLancio('anim-medio', '#FF9800', false); // FALSE: Bersaglio resta base
+      attivaLancio('anim-medio', '#FF9800', false);
     } else {
       input.style.borderColor = '#f44336';
-      attivaLancio('anim-corto', '#f44336', false); // FALSE: Bersaglio resta base
+      attivaLancio('anim-corto', '#f44336', false);
     }
   };
 
