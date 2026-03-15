@@ -5,33 +5,31 @@
   <style>
     :root {
       --colore-freccia-base: #2c2c2c;
-      --colore-pallina-base: #2d3436;
-      --verde-successo: #4CAF50;
       --freccia-width: 126px;
       --freccia-height: 42px;
+      /* Colore unico per tutto il bersaglio (faccia e bordo) */
+      --colore-bersaglio-uniforme: #2d3436; 
     }
 
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       display: flex; flex-direction: column; align-items: center;
-      background: #ffffff; margin: 0; padding-top: 40px;
+      background: #f0f2f5; margin: 0; padding-top: 40px;
     }
 
     .ui-container { text-align: center; margin-bottom: 30px; }
 
-    /* Testo sopra (operazione) ridimensionato per essere più piccolo */
     .math-hint { 
       margin-bottom: 10px; 
       color: #777; 
       font-weight: bold; 
-      font-size: 18px; /* Ridotto per un look più elegante */
+      font-size: 18px; 
       transition: color 0.4s ease;
     }
     
     #operazione {
       color: #2c2c2c;
       letter-spacing: 1px;
-      font-size: 22px;
     }
 
     .input-box { 
@@ -63,10 +61,7 @@
       display: flex; align-items: center; justify-content: center;
     }
 
-    #checkBtn svg {
-      width: 22px;
-      height: 22px;
-    }
+    #checkBtn svg { width: 22px; height: 22px; }
 
     #verifyLabel {
       position: absolute; 
@@ -95,7 +90,7 @@
     .contenitore-freccia {
       width: var(--freccia-width); height: var(--freccia-height);
       position: absolute; left: 50px; top: 179px; 
-      z-index: 20;
+      z-index: 30;
       transform-origin: center right;
       transform: translate(0, 0) rotate(0deg);
       transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -103,14 +98,21 @@
 
     .in-volo { transition: none; }
 
-    .pallina {
-      position: absolute; right: 97px; top: 160px;
-      width: 80px; height: 80px; 
-      background: var(--colore-pallina-base);
-      border-radius: 50%;
+    .bersaglio-prospettico {
+      position: absolute; 
+      right: 124px; 
+      top: 120px; 
+      width: 80px; 
+      height: 160px; 
       z-index: 10;
-      transition: background 0.3s ease;
     }
+
+    /* Stile uniforme per faccia e bordo */
+    .parte-bersaglio { 
+      fill: var(--colore-bersaglio-uniforme); 
+      transition: fill 0.3s ease; 
+    }
+    .faccia-chiara { fill: #ffffff; }
 
     @keyframes tiro-centro {
       0%   { transform: translate(0, 0) rotate(0deg); }
@@ -136,10 +138,9 @@
 <body>
 
   <div class="ui-container">
-    <div class="math-hint">Risolvi: <span id="operazione"></span></div>
+    <div class="math-hint">Solve: <span id="operazione"></span></div>
     <div class="input-box">
       <input id="wordInput" type="number" placeholder="?">
-      
       <div class="btn-wrapper">
         <button id="checkBtn">
           <svg viewBox="0 0 24 24" fill="none">
@@ -155,7 +156,18 @@
     <div class="contenitore-freccia" id="freccia">
       <svg viewBox="0 0 100 40"><path id="path-freccia" d="" /></svg>
     </div>
-    <div class="pallina" id="bersaglio"></div>
+    
+    <div class="bersaglio-prospettico" id="bersaglio">
+      <svg viewBox="0 0 80 160">
+        <ellipse cx="45" cy="80" rx="25" ry="75" class="parte-bersaglio" />
+        <rect x="30" y="5" width="15" height="150" class="parte-bersaglio" />
+        <ellipse cx="30" cy="80" rx="25" ry="75" class="parte-bersaglio"/>
+        
+        <ellipse cx="30" cy="80" rx="15" ry="45" class="faccia-chiara"/>
+        
+        <ellipse cx="30" cy="80" rx="5"  ry="15" class="parte-bersaglio"/>
+      </svg>
+    </div>
   </div>
 
 <script>
@@ -164,6 +176,9 @@
   const opSpan = document.getElementById('operazione');
   const freccia = document.getElementById('freccia');
   const bersaglio = document.getElementById('bersaglio');
+  
+  // Seleziona tutte le parti che devono cambiare colore insieme
+  const partiColorabili = bersaglio.querySelectorAll('.parte-bersaglio');
 
   let risultatoEsatto = 0;
   let resetTimeout;
@@ -179,19 +194,16 @@
     input.focus();
     
     document.documentElement.style.setProperty('--colore-freccia-base', '#2c2c2c');
-    bersaglio.style.background = "#2d3436";
+    partiColorabili.forEach(el => el.style.fill = ""); 
   }
 
-  function attivaLancio(classe, colore, colpisciBersaglio) {
+  function attivaLancio(classe, colore) {
     clearTimeout(resetTimeout);
     document.documentElement.style.setProperty('--colore-freccia-base', colore);
     input.style.color = colore;
     
-    if (colpisciBersaglio) {
-      bersaglio.style.background = colore;
-    } else {
-      bersaglio.style.background = "#2d3436";
-    }
+    // Tutto il bersaglio cambia colore uniformemente
+    partiColorabili.forEach(el => el.style.fill = colore);
     
     freccia.classList.remove('anim-corto', 'anim-medio', 'anim-centro', 'in-volo');
     void freccia.offsetWidth; 
@@ -217,6 +229,8 @@
           input.style.borderColor = "#ccc";
           input.style.color = "#333";
           freccia.style.transform = "";
+          // Torna al nero uniforme
+          partiColorabili.forEach(el => el.style.fill = "");
       }
     }, 800);
   }
@@ -227,13 +241,13 @@
     
     if (valore === risultatoEsatto) {
       input.style.borderColor = '#4CAF50';
-      attivaLancio('anim-centro', '#4CAF50', true);
+      attivaLancio('anim-centro', '#4CAF50');
     } else if (Math.abs(valore - risultatoEsatto) <= 2) {
       input.style.borderColor = '#FF9800';
-      attivaLancio('anim-medio', '#FF9800', false);
+      attivaLancio('anim-medio', '#FF9800');
     } else {
       input.style.borderColor = '#f44336';
-      attivaLancio('anim-corto', '#f44336', false);
+      attivaLancio('anim-corto', '#f44336');
     }
   };
 
@@ -261,7 +275,8 @@
     document.getElementById('path-freccia').setAttribute('d', generaPath(puntiFreccia));
   }
 
-  generaOperazione(); disegna();
+  generaOperazione(); 
+  disegna();
   input.addEventListener("keypress", (e) => { if (e.key === "Enter") btn.click(); });
 </script>
 
