@@ -16,7 +16,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #ecf0f1;
+            background-color: #ffffff;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
 
@@ -35,6 +35,265 @@
             gap: 12px; 
             margin-bottom: 30px; 
             position: relative;
+        }
+
+        #wordInput {
+            width: 250px; 
+            padding: 10px; 
+            text-align: center; 
+            border-radius: 10px; 
+            border: 3px solid #ccc; 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: #333; 
+            transition: all .25s; 
+            text-transform: uppercase;
+            outline: none;
+        }
+
+        #checkBtn {
+            width: 52px; 
+            height: 52px; 
+            border-radius: 50%; 
+            border: none; 
+            background: #2c2c2c; 
+            color: white; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            transition: background-color 0.3s, transform 0.2s;
+            opacity: 1 !important; 
+        }
+
+        #verifyLabel {
+            position: absolute; 
+            right: -85px; 
+            top: 50%; 
+            transform: translateY(-50%) translateX(-8px); 
+            opacity: 0; 
+            color: #2c2c2c; 
+            font-weight: 700; 
+            font-size: 16px; 
+            pointer-events: none; 
+            transition: opacity .3s, transform .3s;
+        }
+
+        /* --- STILE CHELA --- */
+        .stage {
+            width: 350px; 
+            height: 420px; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        .claw-system {
+            position: absolute; 
+            left: 50%; 
+            top: 0; 
+            transform: translateX(-50%); 
+            z-index: 10;
+        }
+
+        .claw-arm {
+            width: 26px; 
+            height: 40px; 
+            background-color: var(--claw-color);
+            position: relative;
+            border-radius: 8px 8px 0 0;
+            transition: height 0.7s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s;
+        }
+
+        .pincer {
+            width: 36px; 
+            height: 65px; 
+            background-color: var(--claw-color);
+            position: absolute; 
+            bottom: -65px;
+            z-index: 11;
+            transition: transform 0.4s cubic-bezier(.25,1.2,.3,1), background-color 0.4s;
+        }
+
+        .pincer.left { border-radius: 60px 0 0 60px; left: -23px; transform-origin: right top; transform: rotate(45deg); }
+        .pincer.right { border-radius: 0 60px 60px 0; right: -23px; transform-origin: left top; transform: rotate(-45deg); }
+        .pincer.left.closed { transform: rotate(14deg); }
+        .pincer.right.closed { transform: rotate(-14deg); }
+
+        #ball {
+            width: 30px; 
+            height: 30px; 
+            background-color: var(--ball-color);
+            border-radius: 50%; 
+            position: absolute; 
+            left: 50%;
+            transform: translateX(-50%); 
+            bottom: 0px; 
+            z-index: 5;
+            transition: bottom 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Il contenitore del testo di spiegazione */
+        #instructionField {
+            margin-bottom: 15px; 
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="instructionField"></div>
+
+    <div class="controls-container">
+        <input id="wordInput" type="text" maxlength="15">
+        <div style="position:relative;">
+            <button id="checkBtn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 18l6-6-6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <span id="verifyLabel">Execute</span>
+        </div>
+    </div>
+
+    <div class="stage">
+        <div class="claw-system">
+            <div id="clawArm" class="claw-arm">
+                <div id="pL" class="pincer left"></div>
+                <div id="pR" class="pincer right"></div>
+            </div>
+        </div>
+        <div id="ball"></div>
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURAZIONE COMANDI ---
+    const CONFIG = {
+        cmdChiudi: "1",
+        cmdApri: "2",
+        cmdMuovi: "3"
+    };
+
+    // --- CONFIGURAZIONE PARAMETRI TESTO (Quelli che cercavi) ---
+    const TEXT_STYLE = {
+        letterSpacing: "px",   // Spaziatura caratteri (es: 1px, 4px, 0px)
+        fontSize: "13px",        // Dimensione font
+        color: "#777777",        // Colore del testo
+        opacity: "1",            // Trasparenza (0 a 1)
+        fontFamily: "'Helvetica Neue', Arial" // Tipo di carattere
+    };
+
+    const instructionField = document.getElementById('instructionField');
+    const btn = document.getElementById('checkBtn');
+    const label = document.getElementById('verifyLabel');
+    const input = document.getElementById('wordInput');
+    const clawArm = document.getElementById('clawArm');
+    const pL = document.getElementById('pL');
+    const pR = document.getElementById('pR');
+    const ball = document.getElementById('ball');
+
+    let isClosed = false;
+    let isExtended = false; 
+    let hasBall = false;
+
+    // Applica i parametri del corpo di testo e i comandi
+    function applyStyles() {
+        // Applica stili grafici
+        instructionField.style.letterSpacing = TEXT_STYLE.letterSpacing;
+        instructionField.style.fontSize = TEXT_STYLE.fontSize;
+        instructionField.style.color = TEXT_STYLE.color;
+        instructionField.style.opacity = TEXT_STYLE.opacity;
+        instructionField.style.fontFamily = TEXT_STYLE.fontFamily;
+
+        // Inserisce il contenuto
+        instructionField.innerText = `INPUTS: ${CONFIG.cmdChiudi} (CLOSE) | ${CONFIG.cmdApri} (OPEN) | ${CONFIG.cmdMuovi} (EXTEND)`;
+        input.placeholder = `ES: ${CONFIG.cmdMuovi}${CONFIG.cmdChiudi}${CONFIG.cmdMuovi}`;
+    }
+    
+    applyStyles();
+
+    // Hover UI
+    btn.onmouseenter = () => {
+        label.style.opacity = 1;
+        label.style.transform = 'translateY(-50%) translateX(0)';
+    };
+    btn.onmouseleave = () => {
+        label.style.opacity = 0;
+        label.style.transform = 'translateY(-50%) translateX(-8px)';
+    };
+
+    function syncGraphics() {
+        clawArm.style.height = isExtended ? "345px" : "40px";
+        if (isClosed) {
+            pL.classList.add('closed');
+            pR.classList.add('closed');
+        } else {
+            pL.classList.remove('closed');
+            pR.classList.remove('closed');
+        }
+        if (hasBall) {
+            ball.style.bottom = isExtended ? "0px" : "305px";
+        } else {
+            ball.style.bottom = "0px";
+        }
+    }
+
+    async function execute() {
+        const rawValue = input.value.trim();
+        if (!rawValue) return;
+
+        const validChars = [CONFIG.cmdChiudi, CONFIG.cmdApri, CONFIG.cmdMuovi];
+        const commands = rawValue.split('').filter(c => c !== ' ');
+        const isInvalid = commands.some(c => !validChars.includes(c));
+
+        if (isInvalid) {
+            document.documentElement.style.setProperty('--claw-color', '#f44336');
+            input.style.borderColor = '#f44336';
+            input.style.color = '#f44336';
+            await new Promise(r => setTimeout(r, 1000));
+            document.documentElement.style.setProperty('--claw-color', '#2c2c2c');
+            input.style.borderColor = '#ccc';
+            input.style.color = '#333';
+            return; 
+        }
+
+        btn.style.pointerEvents = 'none';
+        document.documentElement.style.setProperty('--claw-color', '#4CAF50');
+        input.style.borderColor = '#4CAF50';
+        input.style.color = '#4CAF50';
+
+        for (const cmd of commands) {
+            if (cmd === CONFIG.cmdChiudi) {
+                isClosed = true;
+                if (isExtended && !hasBall) hasBall = true;
+            } 
+            else if (cmd === CONFIG.cmdApri) {
+                isClosed = false;
+                hasBall = false;
+            } 
+            else if (cmd === CONFIG.cmdMuovi) {
+                isExtended = !isExtended;
+            }
+            syncGraphics();
+            await new Promise(r => setTimeout(r, 900));
+        }
+
+        document.documentElement.style.setProperty('--claw-color', '#2c2c2c');
+        input.style.borderColor = '#ccc';
+        input.style.color = '#333';
+        btn.style.pointerEvents = 'all';
+        input.value = ""; 
+    }
+
+    btn.onclick = execute;
+    input.addEventListener('keypress', (e) => { if (e.key === 'Enter') execute(); });
+</script>
+
+</body>
+</html>            position: relative;
         }
 
         #wordInput {
