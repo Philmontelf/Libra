@@ -1,1 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Volto Madrileno Shiftato</title>
+    <style>
+        body {
+            background-color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
+        .controls {
+            margin-bottom: 40px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: 2px solid #000;
+            background: transparent;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            gap: 15px;
+            transition: gap 0.5s ease;
+        }
+
+        .half {
+            width: 110px;
+            height: 480px;
+            background-color: #000;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            overflow: visible;
+        }
+
+        /* Connotati */
+        .eye, .lip {
+            position: absolute;
+            background-color: #fff;
+            transition: all 0.6s ease;
+        }
+
+        .eye {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+        }
+
+        .lip {
+            width: 40px;
+            height: 12px;
+            border-radius: 20px;
+        }
+
+        /* --- MODE: UGUALI (Simmetria Totale) --- */
+        .mode-equal .left {
+            border-radius: 100px 0 0 100% / 100px 0 0 350px;
+        }
+        .mode-equal .right {
+            border-radius: 0 100px 100% 0 / 0 100px 350px 0;
+        }
+        .mode-equal .eye { top: 80px; }
+        .mode-equal .left .eye { right: 30px; }
+        .mode-equal .right .eye { left: 30px; }
+        .mode-equal .lip { bottom: 120px; width: 35px; }
+        .mode-equal .left .lip { right: 0; border-radius: 20px 0 0 20px; }
+        .mode-equal .right .lip { left: 0; border-radius: 0 20px 20px 0; }
+
+        /* --- MODE: AFFUSOLATI (Sinuosi) --- */
+        .mode-tapered .left {
+            border-radius: 120px 0 0 100% / 100px 0 0 450px;
+            transform: translateY(-10px);
+        }
+        .mode-tapered .right {
+            border-radius: 0 120px 100% 0 / 0 100px 450px 0;
+            transform: translateY(10px);
+        }
+        .mode-tapered .eye { top: 70px; width: 20px; height: 35px; }
+        .mode-tapered .left .eye { right: 35px; }
+        .mode-tapered .right .eye { left: 35px; }
+        .mode-tapered .lip { bottom: 100px; height: 8px; }
+        .mode-tapered .left .lip { right: 5px; }
+        .mode-tapered .right .lip { left: 5px; }
+
+        /* --- MODE: ASTRATTO (Shiftato e Ondeggiante) --- */
+        .mode-abstract .left {
+            border-radius: 150px 20px 80px 100% / 100px 50px 120px 300px;
+            transform: rotate(-3deg) translateX(-10px);
+        }
+        .mode-abstract .right {
+            border-radius: 20px 150px 100% 80px / 50px 100px 300px 120px;
+            transform: rotate(5deg) translateY(30px);
+        }
+        /* Shift degli occhi: uno alto, uno basso */
+        .mode-abstract .left .eye { top: 60px; right: 15px; transform: scale(1.2); }
+        .mode-abstract .right .eye { top: 130px; left: 40px; width: 35px; height: 15px; }
+        /* Shift del muso/labbra: disallineati */
+        .mode-abstract .lip { background-color: #ddd; }
+        .mode-abstract .left .lip { bottom: 160px; right: -10px; transform: rotate(15deg); }
+        .mode-abstract .right .lip { bottom: 80px; left: 10px; transform: rotate(-10deg); width: 50px; }
+
+    </style>
+</head>
+<body class="mode-equal">
+
+    <div class="controls">
+        <button onclick="changeMode('mode-abstract')">Shift Astratto</button>
+        <button onclick="changeMode('mode-tapered')">Affusolato</button>
+        <button onclick="changeMode('mode-equal')">Uguale</button>
+    </div>
+
+    <div class="container">
+        <div class="half left">
+            <div class="eye"></div>
+            <div class="lip"></div>
+        </div>
+        
+        <div class="half right">
+            <div class="eye"></div>
+            <div class="lip"></div>
+        </div>
+    </div>
+
+    <script>
+        function changeMode(mode) {
+            document.body.className = mode;
+        }
+    </script>
+
+</body>
+</html>
