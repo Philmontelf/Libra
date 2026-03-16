@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Volto a Punta - Full Morphic Flip</title>
+    <style>
+        body {
+            background-color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
 
+        .controls {
+            margin-bottom: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 2px solid #000;
+            background: #000;
+            color: #fff;
+            font-weight: bold;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        button:hover { background: transparent; color: #000; }
+
+        .container { display: flex; gap: 15px; }
+
+        .half {
+            width: 110px;
+            height: 480px;
+            background-color: #000;
+            position: relative;
+            /* Transizione sinuosa e profonda */
+            transition: all 0.9s cubic-bezier(0.6, 0.05, 0.1, 1);
+        }
+
+        .eye, .lip {
+            position: absolute;
+            background-color: #fff;
+            transition: all 0.9s cubic-bezier(0.6, 0.05, 0.1, 1);
+        }
+
+        /* --- STATO: UGUALI (Base) --- */
+        /* Sinistra: 100px sopra, 350px sotto */
+        .left { 
+            border-radius: 100px 0 0 100% / 100px 0 0 350px; 
+        }
+        /* Destra: 100px sopra, 350px sotto */
+        .right { 
+            border-radius: 0 100px 100% 0 / 0 100px 350px 0; 
+        }
+
+        .eye { width: 24px; height: 24px; border-radius: 50%; top: 80px; }
+        .left .eye { right: 40px; }
+        .right .eye { left: 40px; }
+
+        .lip { width: 40px; height: 12px; top: 348px; }
+        .left .lip { right: 0; border-radius: 20px 0 0 20px; }
+        .right .lip { left: 0; border-radius: 0 20px 20px 0; }
+
+        /* --- LIVELLO: INVERTITO (Il Flip Totale) --- */
+        /* La metà destra scambia i pesi: la punta sale, la fronte scende */
+        .mode-inverted .down {
+            /* FLIP: l'angolo superiore diventa 350px (punta) e l'inferiore 100px (curva larga) */
+            border-radius: 0 350px 100px 0 / 0 350px 100px 0;
+        }
+        }
+        
+        /* Flip dei connotati sulla metà destra */
+        .mode-inverted .right .eye {
+            top: 376px; /* Scende in basso */
+        }
+        .mode-inverted .right .lip {
+            top: 80px;  /* Sale in alto */
+            border-radius: 0 10px 10px 0; /* Opzionale: rende la bocca più 'muso' quando in alto */
+        }
+
+        /* --- LIVELLO: AFFUSOLATO (Cubista/Asimmetrico) --- */
+        .mode-tapered .left { border-radius: 120px 0 0 100% / 100px 0 0 420px; }
+        .mode-tapered .right { border-radius: 0 80px 100% 0 / 0 180px 280px 0; }
+        .mode-tapered .left .eye { width: 48px; height: 48px; right: 35px; }
+        .mode-tapered .right .eye { width: 14px; height: 14px; left: 55px; }
+        .mode-tapered .left .lip { width: 15px; height: 15px; border-radius: 50% 0 0 50%; right: 0; }
+        .mode-tapered .right .lip { width: 75px; height: 35px; border-radius: 0 40% 40% 0; left: 0; }
+
+    </style>
+</head>
+<body class="mode-equal">
+
+    <div class="controls">
+        <button onclick="changeMode('mode-inverted')">Invertito</button>
+        <button onclick="changeMode('mode-tapered')">Affusolato</button>
+        <button onclick="changeMode('mode-equal')">Uguale</button>
+    </div>
+
+    <div class="container">
+        <div class="half left">
+            <div class="eye"></div>
+            <div class="lip"></div>
+        </div>
+        <div class="half right">
+            <div class="eye"></div>
+            <div class="lip"></div>
+        </div>
+    </div>
+
+    <script>
+        function changeMode(mode) {
+            document.body.className = mode;
+        }
+    </script>
+
+</body>
+</html>
